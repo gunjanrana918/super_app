@@ -32,9 +32,9 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
   Pickimage() async {
     var selectedImages = await ImagePicker().pickMultiImage();
     if (selectedImages.isNotEmpty) {
-      selectedimageslist!.addAll(selectedImages);
-      sealobject=false;
       setState(() {
+        selectedimageslist!.addAll(selectedImages);
+        sealobject=false;
       });
       print(selectedImages.length);
       print(selectedimageslist?.length.toString());
@@ -68,13 +68,19 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
       print("Globaldata.Message");
       print(Globaldata.esealmessage);
       Fluttertoast.showToast(
-          msg: Globaldata.esealmessage,
+          msg: newmyparsedata.ileTable[index].msg,
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_SHORT,
-          timeInSecForIosWeb: 2,
+          timeInSecForIosWeb: 3,
           backgroundColor: Color(0xFF184f8d),
           textColor: Colors.white,
           fontSize: 16.0);
+      sealcontainercontroller.clear();
+      remarkscontroller.clear();
+      setState(() {
+        imageFile = null;
+        selectedimageslist!.clear();
+      });
     } else {
       Fluttertoast.showToast(
           msg: Globaldata.esealmessage,
@@ -232,12 +238,12 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
                 }
                 else {
                   asyncFileUpload();
-                  sealcontainercontroller.clear();
-                  remarkscontroller.clear();
-                  setState(() {
-                    imageFile = null;
-                    selectedimageslist!.clear();
-                  });
+                  // sealcontainercontroller.clear();
+                  // remarkscontroller.clear();
+                  // setState(() {
+                  //   imageFile = null;
+                  //   selectedimageslist!.clear();
+                  // });
 
                 }
               },

@@ -59,13 +59,19 @@ class _WarehouseState extends State<Warehouse> {
       Globaldata.Message = message;
       print(Globaldata.Message);
       Fluttertoast.showToast(
-          msg: Globaldata.Message,
+          msg: newparsedata.ileTable[index].msg,
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_LONG,
           timeInSecForIosWeb: 5,
           backgroundColor: Color(0xFF184f8d),
           textColor: Colors.white,
           fontSize: 16.0);
+      sealcontainercontroller.clear();
+      remarkcontroller.clear();
+      setState(() {
+        imageFile=null;
+        selectedImagesList!.clear();
+      });
     } else {
       Fluttertoast.showToast(
           msg: Globaldata.Message,
@@ -124,7 +130,7 @@ class _WarehouseState extends State<Warehouse> {
         _showDialog();
       } else {
         Fluttertoast.showToast(
-            msg: validdata!.ileTable[index].msg,
+            msg: Globaldata.validmessage,
             gravity: ToastGravity.BOTTOM,
             toastLength: Toast.LENGTH_SHORT,
             timeInSecForIosWeb: 2,
@@ -135,7 +141,7 @@ class _WarehouseState extends State<Warehouse> {
       return validdata;
     } else {
       Fluttertoast.showToast(
-          msg: validdata!.ileTable[index].msg,
+          msg: "Container not in inventory",
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_SHORT,
           timeInSecForIosWeb: 2,
@@ -225,12 +231,22 @@ class _WarehouseState extends State<Warehouse> {
                 }
                 else {
                   asyncFileUpload();
-                  sealcontainercontroller.clear();
-                  remarkcontroller.clear();
                   setState(() {
-                    imageFile=null;
-                    selectedImagesList!.clear();
+                    Fluttertoast.showToast(
+                        msg: Globaldata.Message,
+                        gravity: ToastGravity.BOTTOM,
+                        toastLength: Toast.LENGTH_LONG,
+                        timeInSecForIosWeb: 5,
+                        backgroundColor: Color(0xFF184f8d),
+                        textColor: Colors.white,
+                        fontSize: 16.0);
                   });
+                  // sealcontainercontroller.clear();
+                  // remarkcontroller.clear();
+                  // setState(() {
+                  //   imageFile=null;
+                  //   selectedImagesList!.clear();
+                  // });
                 }
               },
               color: Colors.redAccent,

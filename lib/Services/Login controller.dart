@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:super_app/Screens/set_strring_pref.dart';
 import 'package:super_app/universal.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;

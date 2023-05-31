@@ -30,7 +30,8 @@ class _ContainersearchState extends State<Containersearch> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+      Scaffold(
       appBar: AppBar(
         title: Text("History"),
         backgroundColor: Color(0xFF184f8d),
@@ -123,7 +124,7 @@ class _ContainersearchState extends State<Containersearch> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: RadioListTile(
-                          title: Text("eSeal",
+                          title: Text("e-Seal",
                               style: TextStyle(
                                   fontSize: 18.0, fontWeight: FontWeight.bold)),
                           value: "3",
@@ -141,7 +142,7 @@ class _ContainersearchState extends State<Containersearch> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: RadioListTile(
-                          title: Text("None",
+                          title: Text("All",
                               style: TextStyle(
                                   fontSize: 18.0, fontWeight: FontWeight.bold)),
                           value: "0",
@@ -184,12 +185,6 @@ class _ContainersearchState extends State<Containersearch> {
                     }
                     else {
                       fromdata =  await obj.searchIlE();
-                      // Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                      //     ILEListview(fromdata: fromdata),));
-                      // obj.searchcontroller.clear();
-                      // obj.selectedvalue=null;
-                      // setState(() {
-                      // });
                       if (fromdata?.error==false){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>
                             ILEListview(fromdata: fromdata),));
@@ -208,6 +203,7 @@ class _ContainersearchState extends State<Containersearch> {
                             fontSize: 16.0);
                         obj.searchcontroller.clear();
                         obj.selectedvalue=null;
+                        setState(() {});
 
                       }
 

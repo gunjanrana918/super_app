@@ -6,12 +6,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-        android:label="super_app"
+        android:label="E-Biz+"
         android:icon="@mipmap/logo">
 
     <activity
         android:theme="@style/android:Theme.NoTitleBar"
         android:exported="true"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
         android:name=".MainActivity">
         <!-- Specifies an Android theme to apply to this Activity as soon as
              the Android process has started. This theme is visible to the user

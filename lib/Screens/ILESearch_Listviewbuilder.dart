@@ -13,8 +13,8 @@ class ILEListview extends StatefulWidget {
   @override
   State<ILEListview> createState() => _ILEListviewState();
 }
-int index=0;
-int indexx=0;
+ int index=0;
+ int indexx=0;
 class _ILEListviewState extends State<ILEListview> {
 
   @override
@@ -44,11 +44,16 @@ class _ILEListviewState extends State<ILEListview> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("Date " + ": "+ widget.fromdata!.data[index0].dtTime,style: TextStyle(fontSize: 16), ),
-                      Text("Activity Type " + ": "+ widget.fromdata!.data[index0].activityType,style: TextStyle(fontSize: 16), )
+                      Text("Activity Type " + ": "+ widget.fromdata!.data[index0].activityType,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold), )
                     ],
                   ),
                   SizedBox(height: 10,),
-                  Text("Remarks " + ": "+ widget.fromdata!.data[index0].remarks,style: TextStyle(fontSize: 18), ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Remarks " + ": "+ widget.fromdata!.data[index0].remarks,style: TextStyle(fontSize: 18), ),
+                    ],
+                  ),
                   GridView.builder(
                     physics: ScrollPhysics(),
                     shrinkWrap: true,

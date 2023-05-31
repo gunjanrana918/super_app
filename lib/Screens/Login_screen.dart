@@ -16,6 +16,7 @@ import '../universal.dart';
 import 'Mobileotp_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
     theme: ThemeData(
       primaryColor: Colors.red,
@@ -182,13 +183,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 25.0),
+                    padding: const EdgeInsets.only(right: 15.0),
                     child: Text.rich(
                       TextSpan(
                         style: TextStyle( fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF184f8d),decoration: TextDecoration.underline),
-                        text: 'I have read and accept terms and conditions.',
+                        text: 'I have read and agree with terms & conditions.',
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async{
                             Navigator.push(context,
@@ -260,11 +261,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Text(
-                        'Forgot Password ?',
+                        'Forgot Password?',
                         style: TextStyle(
                             fontSize: 16.0,
                             color: Color(0xFF184f8d),
-                            fontWeight: FontWeight.bold,
+                             fontWeight: FontWeight.w500,
                             fontStyle: FontStyle.normal,
                         ),
                         textAlign: TextAlign.right,

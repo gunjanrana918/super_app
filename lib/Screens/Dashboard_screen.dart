@@ -186,7 +186,7 @@ class _DashboardState extends State<Dashboard> {
                     dense: true,
                       leading: const Icon(Icons.exit_to_app,color: Colors.black,),
                       title: const Text(
-                        'logout',
+                        'Logout',
                         style: TextStyle(fontSize: 15.0),
                       ),
                       onTap: () async {
