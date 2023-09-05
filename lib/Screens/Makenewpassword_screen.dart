@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:super_app/Screens/Login_screen.dart';
 import 'package:super_app/Services/Login%20controller.dart';
 
@@ -21,17 +20,17 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Forgot Password',
         ),
         centerTitle: true,
-        backgroundColor: Color(0xFF184f8d),
+        backgroundColor: const Color(0xFF184f8d),
       ),
       body: Column(
         children: [
-          SizedBox(height: 40.0,),
+          const SizedBox(height: 40.0,),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child:  Row(children: <Widget>[
               Expanded(
                 child: TextFormField(
@@ -40,7 +39,7 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
                     obscureText: isObsecure,
                     decoration: InputDecoration(
                       contentPadding:
-                      EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0)),
                       hintText: 'Enter new password',
@@ -59,7 +58,7 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
             ]),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child:  Row(children: <Widget>[
               Expanded(
                 child: TextFormField(
@@ -68,7 +67,7 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
                     obscureText: isObsecures,
                     decoration: InputDecoration(
                         contentPadding:
-                        EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0)),
                         hintText: 'Enter confirm password',
@@ -89,14 +88,14 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
               ),
             ]),
           ),
-          Padding(padding: EdgeInsets.only(top: 30.0)),
+          const Padding(padding: EdgeInsets.only(top: 30.0)),
           // ignore: deprecated_member_use
           MaterialButton(
-              color: Color(0xFF184f8d),
+              color: const Color(0xFF184f8d),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0),
               ),
-              child: Text(
+              child: const Text(
                 'Submit',
                 style: TextStyle(
                     fontSize: 18.0,
@@ -104,7 +103,7 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
                     color: Colors.white),
               ),
               onPressed: () async {
-                if (updatepassword.newpasswordcontroller.text.length == 0) {
+                if (updatepassword.newpasswordcontroller.text.isEmpty) {
                   Fluttertoast.showToast(
                       msg: "Enter new password",
                       gravity: ToastGravity.BOTTOM,
@@ -116,7 +115,7 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
                   return;
                 }
                 else
-                if (updatepassword.confirmpasswordcontroller.text.length == 0) {
+                if (updatepassword.confirmpasswordcontroller.text.isEmpty) {
                   Fluttertoast.showToast(
                       msg: "Enter confirm password",
                       gravity: ToastGravity.BOTTOM,
@@ -137,7 +136,7 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
                       textColor: Colors.white,
                       fontSize: 13.0);
                   // ignore: deprecated_member_use
-                  print("value");
+
                   return;
                 }
                 else {
@@ -145,7 +144,7 @@ final Changepasswordcontroller updatepassword = Get.put(Changepasswordcontroller
                   updatepassword.newpasswordcontroller.clear();
                   updatepassword.confirmpasswordcontroller.clear();
                   Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => LoginScreen()));
+                      builder: (context) => const LoginScreen()));
                 }
               })
         ],

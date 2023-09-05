@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,27 +9,31 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../Models/Container_validation model.dart';
 import '../Models/ILE_Imageupload.dart';
 import '../universal.dart';
+import '../Models/Esealsuggestion_search.dart';
 
-class Homescreeninfo extends StatefulWidget {
-  const Homescreeninfo({Key? key}) : super(key: key);
+class AutoComplete extends StatefulWidget {
+  const AutoComplete({Key? key}) : super(key: key);
 
   @override
-  State<Homescreeninfo> createState() => _HomescreeninfoState();
+  State<AutoComplete> createState() => _AutoCompleteState();
 }
 
 int index = 0;
-
-class _HomescreeninfoState extends State<Homescreeninfo> {
+class _AutoCompleteState extends State<AutoComplete> {
   Imageupload? parsedata;
   ValidContainer? newvaliddata;
-  final TextEditingController sealcontainercontroller = TextEditingController();
   final TextEditingController remarkscontroller = TextEditingController();
+  GlobalKey<AutoCompleteTextFieldState<Players>> key =  GlobalKey();
+  late  AutoCompleteTextField searchTextField;
+  TextEditingController controller = TextEditingController();
+  final PlayersViewModel newdata = PlayersViewModel();
   final picker = ImagePicker();
   String selectedvalue = "3";
   File? imageFile;
   var message;
   bool sealobject = false;
   List<XFile>? selectedimageslist=[];
+
   Pickimage() async {
     var selectedImages = await ImagePicker().pickMultiImage();
     if (selectedImages.isNotEmpty) {
@@ -36,21 +41,19 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
         selectedimageslist!.addAll(selectedImages);
         sealobject=false;
       });
-      print(selectedImages.length);
-      print(selectedimageslist?.length.toString());
     }
   }
-
   //Imageupload function/////
   asyncFileUpload() async {
     int index = 0;
     var request = http.MultipartRequest(
         "POST", Uri.parse("http://103.25.130.254/grfl_login_api/Api/ILE"));
-    request.fields["containerno"] =
-        sealcontainercontroller.text.replaceAll(":", "");
+    request.fields["containerno"] = searchTextField.textField!.controller!.text;
     request.fields["activitytype"] = selectedvalue.toString();
     request.fields["remarks"] = remarkscontroller.text;
-    if (sealobject ==true) {
+    request.fields["arrivaldate"] = Globaldata.ArrivalDate;
+    request.fields["Location"] = Globaldata.Location;
+    if (sealobject == true) {
       request.files.add(await http.MultipartFile.fromPath('', imageFile!.path));
     } else {
       for (int i = 0; i < selectedimageslist!.length; i++) {
@@ -63,36 +66,37 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
       var responseData = await response.stream.bytesToString();
       var newmyparsedata = Imageupload.fromJson(json.decode(responseData));
       message = newmyparsedata.ileTable[index].msg;
-      print(message);
       Globaldata.esealmessage = message;
-      print("Globaldata.Message");
-      print(Globaldata.esealmessage);
-      Fluttertoast.showToast(
-          msg: newmyparsedata.ileTable[index].msg,
-          gravity: ToastGravity.BOTTOM,
-          toastLength: Toast.LENGTH_SHORT,
-          timeInSecForIosWeb: 3,
-          backgroundColor: Color(0xFF184f8d),
-          textColor: Colors.white,
-          fontSize: 16.0);
-      sealcontainercontroller.clear();
-      remarkscontroller.clear();
-      setState(() {
+      if (newmyparsedata.ileTable[index].error == false) {
+        Fluttertoast.showToast(
+            msg: newmyparsedata.ileTable[index].msg,
+            gravity: ToastGravity.BOTTOM,
+            toastLength: Toast.LENGTH_SHORT,
+            timeInSecForIosWeb: 3,
+            backgroundColor: const Color(0xFF184f8d),
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState(() {
+          remarkscontroller.clear();
+          searchTextField.clear();
+          imageFile = null;
+        });
+      }
+      else {
+        Fluttertoast.showToast(
+            msg: 'Container not in inventory',
+            gravity: ToastGravity.BOTTOM,
+            toastLength: Toast.LENGTH_SHORT,
+            timeInSecForIosWeb: 2,
+            backgroundColor: const Color(0xFF184f8d),
+            textColor: Colors.white,
+            fontSize: 16.0);
+        remarkscontroller.clear();
+        searchTextField.clear();
         imageFile = null;
-        selectedimageslist!.clear();
-      });
-    } else {
-      Fluttertoast.showToast(
-          msg: Globaldata.esealmessage,
-          gravity: ToastGravity.BOTTOM,
-          toastLength: Toast.LENGTH_SHORT,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Color(0xFF184f8d),
-          textColor: Colors.white,
-          fontSize: 16.0);
+      }
     }
   }
-
   ///****Container Validation API***////
   Valid_container() async {
     int index = 0;
@@ -100,235 +104,206 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
     var request = http.Request('GET',
         Uri.parse('http://103.25.130.254/grfl_login_api/Api/Checkcontainer'));
     request.body = json.encode({
-      "ContainerNo": sealcontainercontroller.text,
+      "ContainerNo": searchTextField.textField!.controller!.text,
     });
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     var responseData = await response.stream.bytesToString();
     if (response.statusCode == 200) {
-      print(responseData);
       newvaliddata = ValidContainer.fromJson(jsonDecode(responseData));
-      print(newvaliddata!.ileTable[index].msg);
       var mynewmessage = newvaliddata!.ileTable[index].msg;
       Globaldata.validsealmessage = mynewmessage;
-      print(Globaldata.validsealmessage);
-      if (newvaliddata!.ileTable[index].error == false) {
-        Fluttertoast.showToast(
-            msg: Globaldata.validsealmessage,
-            gravity: ToastGravity.BOTTOM,
-            toastLength: Toast.LENGTH_SHORT,
-            timeInSecForIosWeb: 5,
-            backgroundColor: Color(0xFF184f8d),
-            textColor: Colors.white,
-            fontSize: 16.0);
-        setState(() {
-          _showDialog();
-        });
-
-        //_showDialog();
-      } else {
-        Fluttertoast.showToast(
-            msg: newvaliddata!.ileTable[index].msg,
-            gravity: ToastGravity.BOTTOM,
-            toastLength: Toast.LENGTH_SHORT,
-            timeInSecForIosWeb: 2,
-            backgroundColor: Color(0xFF184f8d),
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
+      Globaldata.ArrivalDate = newvaliddata!.ileTable[index].arrivalDate;
       return newvaliddata;
-    } else {
-      Fluttertoast.showToast(
-          msg: newvaliddata!.ileTable[index].msg,
-          gravity: ToastGravity.BOTTOM,
-          toastLength: Toast.LENGTH_SHORT,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Color(0xFF184f8d),
-          textColor: Colors.white,
-          fontSize: 16.0);
-      print(response.reasonPhrase);
     }
   }
-
   @override
   void initState() {
     super.initState();
+    newdata.loadPlayers();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "e-Seal Verification",
-          style: TextStyle(
-            fontSize: 19.0,
-          ),
-        ),
-        backgroundColor: Color(0xFF184f8d),
-        //centerTitle: true,
-      ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         height: 40,
         child: Row(
           children: [
             Expanded(
                 child: MaterialButton(
               onPressed: () {
-                if (sealcontainercontroller.text.length != 11 &&
-                    sealcontainercontroller.text.isEmpty) {
+                if (searchTextField.textField!.controller!.text.isEmpty) {
                   Fluttertoast.showToast(
-                      msg: "Please enter 11 digit container no.",
+                      msg: "Please enter container no.",
                       gravity: ToastGravity.BOTTOM,
                       toastLength: Toast.LENGTH_SHORT,
                       timeInSecForIosWeb: 2,
-                      backgroundColor: Color(0xFF184f8d),
+                      backgroundColor: const Color(0xFF184f8d),
                       textColor: Colors.white,
                       fontSize: 16.0);
-                } else {
+                }
+                else {
                   Valid_container();
+                  openCamera();
                 }
               },
-              child: Text(
-                "Take Photo",
-                style: TextStyle(fontSize: 18.0),
-              ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0.0),
-                  side: BorderSide(color: Colors.black)),
+                  side: const BorderSide(color: Colors.black)),
               elevation: 10.0,
               color: Colors.green,
               textColor: Colors.white,
+              child: const Text(
+                "Take Photo",
+                style: TextStyle(fontSize: 18.0),
+              ),
             )),
             Expanded(
                 child: MaterialButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0.0),
-                  side: BorderSide(color: Colors.black)),
+                  side: const BorderSide(color: Colors.black)),
               elevation: 10.0,
-              onPressed: () {
-                if (sealcontainercontroller.text.isEmpty) {
+              onPressed: () async {
+                if (searchTextField.textField!.controller!.text.isEmpty) {
                   Fluttertoast.showToast(
-                      msg: "Please enter 11 digit container no.",
+                      msg: "Please enter container no.",
                       gravity: ToastGravity.BOTTOM,
                       toastLength: Toast.LENGTH_SHORT,
                       timeInSecForIosWeb: 2,
-                      backgroundColor: Color(0xFF184f8d),
+                      backgroundColor: const Color(0xFF184f8d),
                       textColor: Colors.white,
                       fontSize: 16.0);
-                } else if (remarkscontroller.text.isEmpty) {
-                  Fluttertoast.showToast(
-                      msg: "Please fill remark.",
-                      gravity: ToastGravity.BOTTOM,
-                      toastLength: Toast.LENGTH_SHORT,
-                      timeInSecForIosWeb: 2,
-                      backgroundColor: Color(0xFF184f8d),
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                }
-                else if ((imageFile == null)&& (selectedimageslist == null)) {
+                } else if ((imageFile == null)) {
                   Fluttertoast.showToast(
                       msg: "Please Upload Image",
                       gravity: ToastGravity.BOTTOM,
                       toastLength: Toast.LENGTH_SHORT,
                       timeInSecForIosWeb: 2,
-                      backgroundColor: Color(0xFF184f8d),
+                      backgroundColor: const Color(0xFF184f8d),
                       textColor: Colors.white,
                       fontSize: 16.0);
                 }
                 else {
-                  asyncFileUpload();
-                  // sealcontainercontroller.clear();
-                  // remarkscontroller.clear();
-                  // setState(() {
-                  //   imageFile = null;
-                  //   selectedimageslist!.clear();
-                  // });
-
+                  LoadingIndicatorDialog().show(context);
+                await asyncFileUpload();
+                  LoadingIndicatorDialog().dismiss();
+                 // Onpressed();
                 }
               },
               color: Colors.redAccent,
               textColor: Colors.white,
-              child: Text("Upload", style: TextStyle(fontSize: 18.0)),
+              child: const Text("Upload", style: TextStyle(fontSize: 18.0)),
             )),
           ],
         ),
       ),
-      body: SingleChildScrollView(
+      body:
+      SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Padding(padding: const EdgeInsets.only(top: 10.0)),
-            Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Container(
-                height: 45,
-                width: 300,
-                child: TextFormField(
-                  inputFormatters: [UpperCaseTextFormatter()],
-                  textCapitalization: TextCapitalization.characters,
-                  keyboardType: TextInputType.emailAddress,
-                  controller: sealcontainercontroller,
-                  decoration: InputDecoration(
-                      hintText: "Please Enter Container No.",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.black)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black)),
-                      suffixIcon: GestureDetector(
-                        onTap: () {
-                          sealcontainercontroller.clear();
-                        },
-                        child: Icon(
-                          Icons.clear,
-                          color: Color(0xFF184f8d),
-                        ),
-                      )),
+            const Padding(padding: EdgeInsets.only(top: 10.0)),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left:22.0),
+                  child: Text("Container No. -",style: TextStyle(fontWeight: FontWeight.bold),),
                 ),
-              ),
+              ],
             ),
             Padding(
-              padding: EdgeInsets.all(18.0),
-              child: Container(
+              padding: const EdgeInsets.only(right: 95.0,top: 10.0),
+              child: SizedBox(
+                height: 40,
                 width: 300,
-                child: TextFormField(
+                child:
+                searchTextField = AutoCompleteTextField<Players>(
+                    style:  const TextStyle(color: Colors.black, fontSize: 18.0),
+                    decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+                        hintStyle: TextStyle(color: Colors.black)),
+                    inputFormatters: [
+                       LengthLimitingTextInputFormatter(11),// for mobile
+                    ],
+                    itemSubmitted: (item) {
+                      setState(() {
+                        searchTextField.textField?.controller?.text = item.containerNo;
+                        imageFile=null;
+                      });
+                    },
+                    clearOnSubmit: false,
+                    key: key,
+                    suggestions: newdata.Data,
+                    itemBuilder: (context, item) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(item.containerNo,
+                            style: const TextStyle(
+                                fontSize: 18.0
+                            ),),
+                        ],
+                      );
+                    },
+                    itemSorter: (a, b) {
+                      return a.containerNo.compareTo(b.containerNo);
+                    },
+                    itemFilter: (item, enteredkeyword) {
+                      return item.containerNo
+                          .toLowerCase()
+                          .contains(enteredkeyword.toLowerCase());
+                    }),
+              ),
+            ),
+            const SizedBox(height: 10,),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left:22.0),
+                  child: Text("Remarks -",style: TextStyle(fontWeight: FontWeight.bold),),
+                ),
+              ],
+            ),
+            const SizedBox(height: 5,),
+            Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: SizedBox(
+                  width: 400, // <-- TextField width
+                  height: 240,
+                child: TextField(
                   controller: remarkscontroller,
-                  minLines: 2,
-                  maxLines: 10,
+                  maxLines: 500,
                   decoration: InputDecoration(
-                    hintText: "Type Remark Here.........",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: const BorderSide(color: Colors.black)),
-                    enabledBorder: OutlineInputBorder(
+                    enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black)),
                   ),
                 ),
               ),
             ),
-            Divider(
-              height: 2,
-              thickness: 2,
-            ),
-            Padding(padding: EdgeInsets.only(top: 5.0, left: 8.0)),
+            const Padding(padding: EdgeInsets.only(top: 5.0, left: 8.0)),
             Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Builder(builder: (context) {
                   if (sealobject == false) {
                     return selectedimageslist!=null?
                       SizedBox(
-                      height: 150,
+                      height: 300,
                       child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4, crossAxisSpacing: 2),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5, crossAxisSpacing: 4),
                         itemCount: selectedimageslist!.length,
                         itemBuilder: (context, int index) {
                           return
                             Stack(
                             children: [
-                              Container(
+                              SizedBox(
                                 width: 60,
                                 height: 60,
                                 child: Image.file(
@@ -338,7 +313,7 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
                                   right: 15,
                                   top: -14,
                                   child: IconButton(
-                                      icon: Icon(
+                                      icon: const Icon(
                                         Icons.cancel,
                                         color: Colors.red,
                                         size: 25,
@@ -357,7 +332,7 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
                       height: 200,
                       child: Stack(
                         children: [
-                          Container(
+                          SizedBox(
                             width: 80,
                             height: 100,
                             child: Image.file(File(imageFile!.path)),
@@ -366,7 +341,7 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
                               right: 15,
                               top: -14,
                               child: IconButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.cancel,
                                     color: Colors.red,
                                     size: 25,
@@ -384,48 +359,47 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
       ),
     );
   }
-
   Future<void> _showDialog() {
     // ignore: missing_return
     return showDialog(
-        context: this.context,
+        context: context,
         builder: (BuildContext) {
           return AlertDialog(
-              contentPadding: EdgeInsets.all(10.0),
+              contentPadding: const EdgeInsets.all(10.0),
               shape: Border.all(color: Colors.red, width: 2),
-              title: Text(
+              title: const Text(
                 'Select Image Source',
               ),
               content: SingleChildScrollView(
                   child: ListBody(
                 children: <Widget>[
+                  // GestureDetector(
+                  //   child: Text('Gallery', style: TextStyle(fontSize: 20.0)),
+                  //   onTap: () {
+                  //     Pickimage();
+                  //     setState(() {});
+                  //     Navigator.of(this.context).pop(false);
+                  //   },
+                  // ),
+                  const Padding(padding: EdgeInsets.only(top: 10.0)),
                   GestureDetector(
-                    child: Text('Gallery', style: TextStyle(fontSize: 20.0)),
-                    onTap: () {
-                      Pickimage();
-                      setState(() {});
-                      Navigator.of(this.context).pop(false);
-                    },
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 10.0)),
-                  GestureDetector(
-                    child: Text('Camera',
+                    child: const Text('Camera',
                         style: TextStyle(fontSize: 20.0, color: Colors.red)),
                     onTap: () {
                       openCamera();
                       setState(() {});
-                      Navigator.of(this.context).pop(false);
+                      Navigator.of(context).pop(false);
                     },
                   ),
-                  Padding(padding: EdgeInsets.only(top: 10.0)),
+                  const Padding(padding: EdgeInsets.only(top: 10.0)),
                   Row(
                     children: [
                       Expanded(
                           child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(this.context).pop(false);
+                          Navigator.of(context).pop(false);
                         },
-                        child: Text(
+                        child: const Text(
                           "Cancel",
                           style: TextStyle(fontSize: 20.0),
                         ),
@@ -436,17 +410,13 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
               )));
         });
   }
-
   Future<void> openGallery() async {
     var pickedFile =
         (await picker.pickImage(source: ImageSource.gallery, imageQuality: 25));
     setState(() {
       imageFile = File(pickedFile!.path);
     });
-    print("ABCD");
-    print(imageFile);
   }
-
   //select image from camera
   Future<void> openCamera() async {
     var pickedFile =
@@ -456,16 +426,63 @@ class _HomescreeninfoState extends State<Homescreeninfo> {
       sealobject = true;
     });
     setState(() {});
-    print("ABCD");
-    print(imageFile);
+  }
+}
+class LoadingIndicatorDialog {
+  static final LoadingIndicatorDialog _singleton = LoadingIndicatorDialog._internal();
+  late BuildContext _context;
+  bool isDisplayed = false;
+
+  factory LoadingIndicatorDialog() {
+    return _singleton;
+  }
+
+  LoadingIndicatorDialog._internal();
+
+  show(BuildContext context, {String text = 'Please wait while data submitted...'}) {
+    if(isDisplayed) {
+      return;
+    }
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          _context = context;
+          isDisplayed = true;
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: SimpleDialog(
+              backgroundColor: const Color(0xFF184f8d),
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+                        child: CircularProgressIndicator(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(text,style: const TextStyle(color: Colors.white,fontSize: 16),),
+                      )
+                    ],
+                  ),
+                )
+              ] ,
+            ),
+          );
+        }
+    );
+  }
+
+  dismiss() {
+    if(isDisplayed) {
+      Navigator.of(_context).pop();
+      isDisplayed = false;
+    }
   }
 }
 
-class UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    return TextEditingValue(
-        text: newValue.text.toUpperCase(), selection: newValue.selection);
-  }
-}
+
+

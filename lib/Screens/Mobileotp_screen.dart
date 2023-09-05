@@ -21,17 +21,17 @@ class _MobileOTPState extends State<MobileOTP> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Forgot Password',
         ),
         centerTitle: true,
-        backgroundColor: Color(0xFF184f8d),
+        backgroundColor: const Color(0xFF184f8d),
       ),
       body: Column(
         children: [
-          SizedBox(height: 40.0,),
+          const SizedBox(height: 40.0,),
           Padding(
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             child:  Row(children: <Widget>[
               Expanded(
                 child: TextFormField(
@@ -39,7 +39,7 @@ class _MobileOTPState extends State<MobileOTP> {
                     controller: OTPobj.mobiletextcontroller,
                     decoration: InputDecoration(
                       contentPadding:
-                      EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0)),
                       hintText: 'Enter mobile No.',
@@ -47,14 +47,14 @@ class _MobileOTPState extends State<MobileOTP> {
               ),
             ]),
           ),
-          Padding(padding: EdgeInsets.only(top: 30.0)),
+          const Padding(padding: EdgeInsets.only(top: 30.0)),
           // ignore: deprecated_member_use
           MaterialButton(
-              color: Color(0xFF184f8d),
+              color: const Color(0xFF184f8d),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0),
               ),
-              child: Text(
+              child: const Text(
                 'Submit',
                 style: TextStyle(
                     fontSize: 18.0,
@@ -76,7 +76,7 @@ class _MobileOTPState extends State<MobileOTP> {
                   OTPobj.MobileOTP();
                   //OTPobj.mobiletextcontroller.clear();
                   Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => OTPVerify()));
+                      builder: (context) => const OTPVerify()));
                 }
               })
         ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import '../Services/Login controller.dart';
@@ -21,7 +20,7 @@ class _OTPVerifyState extends State<OTPVerify> {
         title: const Text("Verify OTP"),
         // titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
         // elevation: 0,
-        backgroundColor: Color(0xFF184f8d),
+        backgroundColor: const Color(0xFF184f8d),
         // centerTitle: true,
       ),
       body: Padding(
@@ -29,12 +28,12 @@ class _OTPVerifyState extends State<OTPVerify> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 80,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
+                children: [
                   //Text("Verification"),
                   Text(
                     "We have sent OTP on +919528166211",
@@ -90,11 +89,11 @@ class _OTPVerifyState extends State<OTPVerify> {
                   width: 120,
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Color(0xFF184f8d)),
+                      backgroundColor: MaterialStateProperty.all(const Color(0xFF184f8d)),
                     ),
                     onPressed:  () {
                       Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => Newpassword()));
+                          builder: (context) => const Newpassword()));
                     } ,
                     child: const Text("Submit",style: TextStyle(fontSize: 18)),
                   ),

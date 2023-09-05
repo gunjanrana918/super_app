@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:super_app/Screens/Dashboard_screen.dart';
-import 'package:super_app/universal.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:splashscreen/splashscreen.dart';
+// import 'package:splashscreen/splashscreen.dart';
 
 import '../Services/Login controller.dart';
 import 'Login_screen.dart';
@@ -29,7 +29,6 @@ class _SplashscreenState extends State<Splashscreen> {
   getDataFromPref() async {
     final prefs = await SharedPreferences.getInstance();
     error= prefs.getBool('error') ;
-    print(error);
   }
 
 
@@ -40,26 +39,28 @@ class _SplashscreenState extends State<Splashscreen> {
     startTimer();
   }
 
-  startTimer() async {
+  startTimer() {
     var duration = const Duration(seconds: 2);
     return Timer(duration, route);
   }
 
   route() {
+    //internetCheck();
     Navigator.pushReplacement(
       context,MaterialPageRoute(
-        builder: (context) =>error==false?Dashboard():LoginScreen()),);
+        builder: (context) =>error==false?const Dashboard():const LoginScreen()),);
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: Colors.transparent,
       body: Stack(
         fit: StackFit.loose,
         children: [
           Center(
             child: Container(
-              height: 250,
-              width:450,
+              height: 150,
+              width:250,
               decoration: const BoxDecoration(
                 //color: Colors.white,
                 image: DecorationImage(
@@ -72,6 +73,40 @@ class _SplashscreenState extends State<Splashscreen> {
         ],
       ),
     );
+  }
+  internetCheck() async{
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      // I am connected to a mobile network.
+      Fluttertoast.showToast(
+          msg: 'Check your Internet',
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_SHORT,
+          timeInSecForIosWeb: 3,
+          backgroundColor: const Color(0xFF184f8d),
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      // I am connected to a wifi network.
+      Fluttertoast.showToast(
+          msg: 'Check your Internet',
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_SHORT,
+          timeInSecForIosWeb: 3,
+          backgroundColor: const Color(0xFF184f8d),
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: 'Please connected to internet',
+          gravity: ToastGravity.BOTTOM,
+          toastLength: Toast.LENGTH_SHORT,
+          timeInSecForIosWeb: 3,
+          backgroundColor: const Color(0xFF184f8d),
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 }
 

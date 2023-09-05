@@ -30,66 +30,58 @@ class LoginController extends GetxController{
         });
     try {
       if(response.statusCode==200){
-        print("daa 1");
         var result = jsonDecode(response.body);
-        print(result);
         var logdetails = Welcome.fromJson((result));
+        var loginmessage = logdetails.login[index].msg;
+        Globaldata.loginmessage = loginmessage;
         if(logdetails.login[index].error==false)
         {
           sharedPreferences.setString('msg',logdetails.login[index].msg );
           sharedPreferences.setString('UserId',logdetails.login[index].userId );
-           sharedPreferences.setString('Password',logdetails.login[index].password );
-           print("%%%%");
+          sharedPreferences.setString('Password',logdetails.login[index].password );
+          sharedPreferences.setString('Location',logdetails.login[index].location );
           var username = sharedPreferences.getString('msg');
           Globaldata.DisplayName = username.toString();
           var userid = sharedPreferences.getString('UserId');
           Globaldata.UserId = userid.toString();
           var password = sharedPreferences.getString("Password");
           Globaldata.Password = password.toString();
-          // Fluttertoast.showToast(
-          //     msg: Globaldata.DisplayName,
-          //     gravity: ToastGravity.BOTTOM,
-          //     toastLength: Toast.LENGTH_SHORT,
-          //     timeInSecForIosWeb: 2,
-          //     backgroundColor: Color(0xFF184f8d),
-          //     textColor: Colors.white,
-          //     fontSize: 16.0);
+          var location = sharedPreferences.getString("Location");
+          Globaldata.Location= location.toString();
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>
-              Dashboard(),));
+              const Dashboard(),));
           mobilecontroller.clear();
           passwordcontroller.clear();
         }
         else {
-          print(logdetails.login[index].msg);
-          print("error");
           Fluttertoast.showToast(
-              msg: logdetails.login[index].msg,
+              msg:  Globaldata.loginmessage,
               gravity: ToastGravity.BOTTOM,
               toastLength: Toast.LENGTH_SHORT,
               timeInSecForIosWeb: 2,
-              backgroundColor: Color(0xFF184f8d),
+              backgroundColor: const Color(0xFF184f8d),
               textColor: Colors.white,
               fontSize: 16.0);
         }
       }
       else{
         Fluttertoast.showToast(
-            msg: Globaldata.DisplayName,
+            msg: Globaldata.loginmessage,
             gravity: ToastGravity.BOTTOM,
             toastLength: Toast.LENGTH_SHORT,
             timeInSecForIosWeb: 2,
-            backgroundColor: Color(0xFF184f8d),
+            backgroundColor: const Color(0xFF184f8d),
             textColor: Colors.white,
             fontSize: 16.0);
       }
     }
     catch(e){
       Fluttertoast.showToast(
-          msg: Globaldata.DisplayName,
+          msg: Globaldata.loginmessage,
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_SHORT,
           timeInSecForIosWeb: 2,
-          backgroundColor: Color(0xFF184f8d),
+          backgroundColor: const Color(0xFF184f8d),
           textColor: Colors.white,
           fontSize: 16.0);
     }
@@ -117,23 +109,19 @@ class Changepasswordcontroller extends GetxController {
     request.body = json.encode({
       "UserId": Globaldata.UserId,
       "Password": confirmpasswordcontroller.text
-    });print(Globaldata.UserId);
+    });
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     var responseData = await response.stream.bytesToString();
     if (response.statusCode == 200) {
-      print(responseData);
       var newotppasword = Changepassword.fromJson(jsonDecode(responseData));
-      print(newotppasword.resetpwd[index].msg);
       mynewpassword = newotppasword.resetpwd[index].msg;
-      print("object");
-      print(mynewpassword);
       Fluttertoast.showToast(
           msg:mynewpassword,
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_LONG,
           timeInSecForIosWeb: 5,
-          backgroundColor: Color(0xFF184f8d),
+          backgroundColor: const Color(0xFF184f8d),
           textColor: Colors.white,
           fontSize: 16.0);
       return newotppasword;
@@ -144,7 +132,7 @@ class Changepasswordcontroller extends GetxController {
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_LONG,
           timeInSecForIosWeb: 5,
-          backgroundColor: Color(0xFF184f8d),
+          backgroundColor: const Color(0xFF184f8d),
           textColor: Colors.white,
           fontSize: 16.0);
     }
@@ -169,21 +157,17 @@ class OTPValidationcontroller extends GetxController{
     http.StreamedResponse response = await request.send();
     var responseData = await response.stream.bytesToString();
     if (response.statusCode == 200) {
-      print(responseData);
       var newotpresponse = OtpValidation.fromJson(jsonDecode(responseData));
-      print(newotpresponse);
      Mynewotp = newotpresponse.login[index].msg;
      Globaldata.UserId = newotpresponse.login[index].userId;
-     print("&&&&&");
-     print(Mynewotp);
-      Fluttertoast.showToast(
-          msg:Mynewotp,
-          gravity: ToastGravity.BOTTOM,
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 5,
-          backgroundColor: Color(0xFF184f8d),
-          textColor: Colors.white,
-          fontSize: 16.0);
+      // Fluttertoast.showToast(
+      //     msg:Mynewotp,
+      //     gravity: ToastGravity.BOTTOM,
+      //     toastLength: Toast.LENGTH_LONG,
+      //     timeInSecForIosWeb: 5,
+      //     backgroundColor: Color(0xFF184f8d),
+      //     textColor: Colors.white,
+      //     fontSize: 16.0);
       return newotpresponse;
     }
     else {
@@ -192,7 +176,7 @@ class OTPValidationcontroller extends GetxController{
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_LONG,
           timeInSecForIosWeb: 5,
-          backgroundColor: Color(0xFF184f8d),
+          backgroundColor: const Color(0xFF184f8d),
           textColor: Colors.white,
           fontSize: 16.0);
     }

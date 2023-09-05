@@ -1,17 +1,13 @@
-import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
-import 'package:flutter/src/widgets/binding.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:super_app/Screens/Dashboard_screen.dart';
 import 'package:super_app/Screens/Privacypolicy_page.dart';
 import 'package:super_app/Services/Login%20controller.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import '../universal.dart';
 import 'Mobileotp_screen.dart';
 
@@ -21,15 +17,17 @@ void main() {
     theme: ThemeData(
       primaryColor: Colors.red,
       // ignore: deprecated_member_use
-      accentColor: Colors.deepOrange,
+      hintColor: Colors.deepOrange,
     ),
-    home: LoginScreen(),
+    home: const LoginScreen(),
   ));
 }
 
 late SharedPreferences localstorage;
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
   static init() async {
@@ -49,32 +47,30 @@ class _LoginScreenState extends State<LoginScreen> {
     Globaldata.DisplayName = prefs.getString('msg')!;
     Globaldata.UserId = prefs.getString("UserId")!;
     Globaldata.Password = prefs.getString("Password")!;
+    Globaldata.Location= prefs.getString("Location")!;
     if (Globaldata.UserId.isNotEmpty) {
-      Future.delayed(Duration(seconds: 5), () {
-        print("Executed after 5 seconds");
+      Future.delayed(const Duration(seconds: 5), () {
       });
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Dashboard(),
+            builder: (context) => const Dashboard(),
           ));
     } else {
       await Future.delayed(const Duration(milliseconds: 1000));
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginScreen(),
+            builder: (context) => const LoginScreen(),
           ));
     }
   }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     main();
   }
-
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -92,13 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
     final LoginController obj = Get.put((LoginController()));
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Spacer(),
+              const Spacer(),
               Container(
                 height: 120,
                 width: 130,
@@ -109,17 +105,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         fit: BoxFit.cover)),
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(20.0),
               ),
               Row(
                 children: <Widget>[
                   Expanded(
                     child: Container(
-                      margin: EdgeInsets.only(left: 13, right: 16.0),
+                      margin: const EdgeInsets.only(left: 13, right: 16.0),
                       child: TextFormField(
                         controller: obj.mobilecontroller,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: 'User Id',
                             hintStyle: TextStyle(color: Colors.black),
@@ -132,21 +128,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   )
                 ],
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(15.0),
               ),
               Row(children: <Widget>[
                 Expanded(
                     child: Container(
-                  margin: EdgeInsets.only(left: 13, right: 16.0),
+                  margin: const EdgeInsets.only(left: 13, right: 16.0),
                   child: TextFormField(
                     controller: obj.passwordcontroller,
                     obscureText: isObsecure,
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                         hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.black),
-                        prefixIcon: Icon(
+                        hintStyle: const TextStyle(color: Colors.black),
+                        prefixIcon: const Icon(
                           Icons.lock,
                           color: Colors.black,
                         ),
@@ -165,14 +161,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 )),
               ]),
-              Padding(padding: EdgeInsets.only(top: 5.0)),
+              const Padding(padding: EdgeInsets.only(top: 5.0)),
               //terms and condition checkbox
               Row(
                 children: [
                   Container(
                     child: Expanded(
                       child: Material(
-                        child: Checkbox(
+                        child:
+                        Checkbox(
                           checkColor: Colors.red,
                           value: agree,
                           onChanged: (newValue) {
@@ -186,14 +183,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.only(right: 15.0),
                     child: Text.rich(
                       TextSpan(
-                        style: TextStyle( fontStyle: FontStyle.normal,
+                        style: const TextStyle( fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF184f8d),decoration: TextDecoration.underline),
+                            color: Color(0xFF184f8d),),
                         text: 'I have read and agree with terms & conditions.',
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async{
                             Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => Privacyscreen()));
+                                MaterialPageRoute(builder: (context) => const Privacyscreen()));
                           }
 
                       ),
@@ -205,13 +202,13 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                   padding: const EdgeInsets.only(top: 20),
                   // ignore: deprecated_member_use
-                  child: Container(
+                  child: SizedBox(
                     width: 280,
                     height: 50,
                     child: MaterialButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0)),
-                      color: Color(0xFF184f8d),
+                      color: const Color(0xFF184f8d),
                       child: const Text(
                         'Sign In',
                         style: TextStyle(
@@ -227,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               gravity: ToastGravity.BOTTOM,
                               toastLength: Toast.LENGTH_SHORT,
                               timeInSecForIosWeb: 2,
-                              backgroundColor: Color(0xFF184f8d),
+                              backgroundColor: const Color(0xFF184f8d),
                               textColor: Colors.white,
                               fontSize: 16.0);
                         }
@@ -238,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               gravity: ToastGravity.BOTTOM,
                               toastLength: Toast.LENGTH_SHORT,
                               timeInSecForIosWeb: 2,
-                              backgroundColor: Color(0xFF184f8d),
+                              backgroundColor: const Color(0xFF184f8d),
                               textColor: Colors.white,
                               fontSize: 16.0);}
                         // }
@@ -248,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   )),
-              Padding(padding: EdgeInsets.only(top: 10, right: 20.0)),
+              const Padding(padding: EdgeInsets.only(top: 10, right: 20.0)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,10 +253,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   InkWell(
                     onTap: () async {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MobileOTP()));
+                          MaterialPageRoute(builder: (context) => const MobileOTP()));
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 8.0),
                       child: Text(
                         'Forgot Password?',
                         style: TextStyle(
@@ -274,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   )
                 ],
               ),
-              Spacer()
+              const Spacer()
             ],
           ),
         ),

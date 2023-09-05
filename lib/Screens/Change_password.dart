@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_app/Screens/Login_screen.dart';
 
@@ -26,19 +25,19 @@ class _ChangemypasswordState extends State<Changemypassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Change Password',
         ),
         //centerTitle: true,
-        backgroundColor: Color(0xFF184f8d),
+        backgroundColor: const Color(0xFF184f8d),
       ),
       body: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 40.0,
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(children: <Widget>[
               Expanded(
                 child: TextFormField(
@@ -47,7 +46,7 @@ class _ChangemypasswordState extends State<Changemypassword> {
                     obscureText: isObsecure,
                     decoration: InputDecoration(
                       contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0)),
                       hintText: 'Enter new password',
@@ -67,7 +66,7 @@ class _ChangemypasswordState extends State<Changemypassword> {
             ]),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(children: <Widget>[
               Expanded(
                 child: TextFormField(
@@ -76,7 +75,7 @@ class _ChangemypasswordState extends State<Changemypassword> {
                     obscureText: isObsecures,
                     decoration: InputDecoration(
                         contentPadding:
-                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                            const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0)),
                         hintText: 'Enter confirm password',
@@ -95,14 +94,14 @@ class _ChangemypasswordState extends State<Changemypassword> {
               ),
             ]),
           ),
-          Padding(padding: EdgeInsets.only(top: 30.0)),
+          const Padding(padding: EdgeInsets.only(top: 30.0)),
           // ignore: deprecated_member_use
           MaterialButton(
-              color: Color(0xFF184f8d),
+              color: const Color(0xFF184f8d),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0),
               ),
-              child: Text(
+              child: const Text(
                 'Submit',
                 style: TextStyle(
                     fontSize: 18.0,
@@ -110,7 +109,7 @@ class _ChangemypasswordState extends State<Changemypassword> {
                     color: Colors.white),
               ),
               onPressed: () async {
-                 if (updatepassword.newpasswordcontroller.text.length == 0) {
+                 if (updatepassword.newpasswordcontroller.text.isEmpty) {
                   Fluttertoast.showToast(
                       msg: "Enter new password",
                       gravity: ToastGravity.BOTTOM,
@@ -120,7 +119,7 @@ class _ChangemypasswordState extends State<Changemypassword> {
                       textColor: Colors.white,
                       fontSize: 13.0);
                   return;
-                } else if (updatepassword.confirmpasswordcontroller.text.length == 0) {
+                } else if (updatepassword.confirmpasswordcontroller.text.isEmpty) {
                   Fluttertoast.showToast(
                       msg: "Enter confirm password",
                       gravity: ToastGravity.BOTTOM,
