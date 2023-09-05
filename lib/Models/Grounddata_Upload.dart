@@ -1,21 +1,21 @@
 // To parse this JSON data, do
 //
-//     final validContainer = validContainerFromJson(jsonString);
+//     final grounddataupload = grounddatauploadFromJson(jsonString);
 
 import 'dart:convert';
 
-ValidContainer validContainerFromJson(String str) => ValidContainer.fromJson(json.decode(str));
+Grounddataupload grounddatauploadFromJson(String str) => Grounddataupload.fromJson(json.decode(str));
 
-String validContainerToJson(ValidContainer data) => json.encode(data.toJson());
+String grounddatauploadToJson(Grounddataupload data) => json.encode(data.toJson());
 
-class ValidContainer {
+class Grounddataupload {
   List<IleTable> ileTable;
 
-  ValidContainer({
+  Grounddataupload({
     required this.ileTable,
   });
 
-  factory ValidContainer.fromJson(Map<String, dynamic> json) => ValidContainer(
+  factory Grounddataupload.fromJson(Map<String, dynamic> json) => Grounddataupload(
     ileTable: List<IleTable>.from(json["ILETable"].map((x) => IleTable.fromJson(x))),
   );
 
@@ -27,27 +27,19 @@ class ValidContainer {
 class IleTable {
   bool error;
   String msg;
-  String containerNo;
-  String arrivalDate;
 
   IleTable({
     required this.error,
     required this.msg,
-    required this.containerNo,
-    required this.arrivalDate,
   });
 
   factory IleTable.fromJson(Map<String, dynamic> json) => IleTable(
     error: json["error"],
     msg: json["msg"],
-    containerNo: json["ContainerNo"],
-    arrivalDate: json["ArrivalDate"],
   );
 
   Map<String, dynamic> toJson() => {
     "error": error,
     "msg": msg,
-    "ContainerNo": containerNo,
-    "ArrivalDate": arrivalDate,
   };
 }

@@ -34,11 +34,14 @@ class LoginController extends GetxController{
         var result = jsonDecode(response.body);
         print(result);
         var logdetails = Welcome.fromJson((result));
+        var loginmessage = logdetails.login[index].msg;
+        Globaldata.loginmessage = loginmessage;
         if(logdetails.login[index].error==false)
         {
           sharedPreferences.setString('msg',logdetails.login[index].msg );
           sharedPreferences.setString('UserId',logdetails.login[index].userId );
-           sharedPreferences.setString('Password',logdetails.login[index].password );
+          sharedPreferences.setString('Password',logdetails.login[index].password );
+          sharedPreferences.setString('Location',logdetails.login[index].location );
            print("%%%%");
           var username = sharedPreferences.getString('msg');
           Globaldata.DisplayName = username.toString();
@@ -46,24 +49,16 @@ class LoginController extends GetxController{
           Globaldata.UserId = userid.toString();
           var password = sharedPreferences.getString("Password");
           Globaldata.Password = password.toString();
-          // Fluttertoast.showToast(
-          //     msg: Globaldata.DisplayName,
-          //     gravity: ToastGravity.BOTTOM,
-          //     toastLength: Toast.LENGTH_SHORT,
-          //     timeInSecForIosWeb: 2,
-          //     backgroundColor: Color(0xFF184f8d),
-          //     textColor: Colors.white,
-          //     fontSize: 16.0);
+          var location = sharedPreferences.getString("Location");
+          Globaldata.Location= location.toString();
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>
               Dashboard(),));
           mobilecontroller.clear();
           passwordcontroller.clear();
         }
         else {
-          print(logdetails.login[index].msg);
-          print("error");
           Fluttertoast.showToast(
-              msg: logdetails.login[index].msg,
+              msg:  Globaldata.loginmessage,
               gravity: ToastGravity.BOTTOM,
               toastLength: Toast.LENGTH_SHORT,
               timeInSecForIosWeb: 2,
@@ -74,7 +69,7 @@ class LoginController extends GetxController{
       }
       else{
         Fluttertoast.showToast(
-            msg: Globaldata.DisplayName,
+            msg: Globaldata.loginmessage,
             gravity: ToastGravity.BOTTOM,
             toastLength: Toast.LENGTH_SHORT,
             timeInSecForIosWeb: 2,
@@ -85,7 +80,7 @@ class LoginController extends GetxController{
     }
     catch(e){
       Fluttertoast.showToast(
-          msg: Globaldata.DisplayName,
+          msg: Globaldata.loginmessage,
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_SHORT,
           timeInSecForIosWeb: 2,
@@ -176,14 +171,14 @@ class OTPValidationcontroller extends GetxController{
      Globaldata.UserId = newotpresponse.login[index].userId;
      print("&&&&&");
      print(Mynewotp);
-      Fluttertoast.showToast(
-          msg:Mynewotp,
-          gravity: ToastGravity.BOTTOM,
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 5,
-          backgroundColor: Color(0xFF184f8d),
-          textColor: Colors.white,
-          fontSize: 16.0);
+      // Fluttertoast.showToast(
+      //     msg:Mynewotp,
+      //     gravity: ToastGravity.BOTTOM,
+      //     toastLength: Toast.LENGTH_LONG,
+      //     timeInSecForIosWeb: 5,
+      //     backgroundColor: Color(0xFF184f8d),
+      //     textColor: Colors.white,
+      //     fontSize: 16.0);
       return newotpresponse;
     }
     else {

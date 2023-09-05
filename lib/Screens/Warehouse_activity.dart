@@ -20,12 +20,12 @@ int index = 0;
 
 class _WarehouseState extends State<Warehouse> {
   Imageupload? parsedata;
-  ValidContainer? validdata;
   List<Imageupload> list = [];
   String mycontainer = "";
   final TextEditingController sealcontainercontroller = TextEditingController();
   final TextEditingController remarkcontroller = TextEditingController();
   File? imageFile;
+  ValidContainer? newesealdata;
   final picker = ImagePicker();
  bool Warehouseobject=false;
   String? selectedvalue;
@@ -38,6 +38,8 @@ class _WarehouseState extends State<Warehouse> {
         sealcontainercontroller.text.replaceAll(":", "");
     request.fields["activitytype"] = selectedvalue.toString();
     request.fields["remarks"] = remarkcontroller.text;
+    request.fields["arrivaldate"] = newesealdata!.ileTable[index].arrivalDate;
+    Globaldata.ArrivalDate = newesealdata!.ileTable[index].arrivalDate;
     if (Warehouseobject==true){
       request.files.add(await http.MultipartFile.fromPath('', imageFile!.path));
     } else {
@@ -52,14 +54,14 @@ class _WarehouseState extends State<Warehouse> {
       var responseToString = String.fromCharCodes(responseData);
       print("DATA1");
       print(responseToString);
-      var newparsedata = Imageupload.fromJson(json.decode(responseToString));
-      print(newparsedata.ileTable[index].msg);
-      var message = newparsedata.ileTable[index].msg;
+      var parsedata = Imageupload.fromJson(json.decode(responseToString));
+      print(parsedata.ileTable[index].msg);
+      var message = parsedata.ileTable[index].msg;
       print(message);
       Globaldata.Message = message;
       print(Globaldata.Message);
       Fluttertoast.showToast(
-          msg: newparsedata.ileTable[index].msg,
+          msg: parsedata.ileTable[index].msg,
           gravity: ToastGravity.BOTTOM,
           toastLength: Toast.LENGTH_LONG,
           timeInSecForIosWeb: 5,
@@ -109,28 +111,25 @@ class _WarehouseState extends State<Warehouse> {
     var responseData = await response.stream.bytesToString();
     if (response.statusCode == 200) {
       print(responseData);
-     var newesealdata = ValidContainer.fromJson(jsonDecode(responseData));
-      print('?????????');
-      print(newesealdata);
-      print(newesealdata.ileTable[index].msg);
-      var mymessage = newesealdata.ileTable[index].msg;
+      newesealdata = ValidContainer.fromJson(jsonDecode(responseData));
+      print(newesealdata!.ileTable[index].msg);
+      var mymessage = newesealdata!.ileTable[index].msg;
       Globaldata.validmessage = mymessage;
+      Globaldata.ArrivalDate = newesealdata!.ileTable[index].arrivalDate;
       print(Globaldata.validmessage);
-      if (newesealdata.ileTable[index].error == false) {
+      if (newesealdata!.ileTable[index].error == false) {
         Fluttertoast.showToast(
-            msg: newesealdata.ileTable[index].msg,
+            msg: newesealdata!.ileTable[index].msg,
             gravity: ToastGravity.BOTTOM,
             toastLength: Toast.LENGTH_SHORT,
             timeInSecForIosWeb: 2,
             backgroundColor: Color(0xFF184f8d),
             textColor: Colors.white,
             fontSize: 16.0);
-        //Pickimage();
-        //loadAssets();
         _showDialog();
       } else {
         Fluttertoast.showToast(
-            msg: Globaldata.validmessage,
+            msg: "Container not in inventory",
             gravity: ToastGravity.BOTTOM,
             toastLength: Toast.LENGTH_SHORT,
             timeInSecForIosWeb: 2,
@@ -138,7 +137,7 @@ class _WarehouseState extends State<Warehouse> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
-      return validdata;
+      return newesealdata;
     } else {
       Fluttertoast.showToast(
           msg: "Container not in inventory",
@@ -212,7 +211,7 @@ class _WarehouseState extends State<Warehouse> {
                       fontSize: 16.0);
                 } else if (remarkcontroller.text.isEmpty) {
                   Fluttertoast.showToast(
-                      msg: "Please enter 11 digit container no.",
+                      msg: "Please fill remark.",
                       gravity: ToastGravity.BOTTOM,
                       toastLength: Toast.LENGTH_LONG,
                       timeInSecForIosWeb: 2,
@@ -231,22 +230,6 @@ class _WarehouseState extends State<Warehouse> {
                 }
                 else {
                   asyncFileUpload();
-                  setState(() {
-                    Fluttertoast.showToast(
-                        msg: Globaldata.Message,
-                        gravity: ToastGravity.BOTTOM,
-                        toastLength: Toast.LENGTH_LONG,
-                        timeInSecForIosWeb: 5,
-                        backgroundColor: Color(0xFF184f8d),
-                        textColor: Colors.white,
-                        fontSize: 16.0);
-                  });
-                  // sealcontainercontroller.clear();
-                  // remarkcontroller.clear();
-                  // setState(() {
-                  //   imageFile=null;
-                  //   selectedImagesList!.clear();
-                  // });
                 }
               },
               color: Colors.redAccent,
@@ -261,22 +244,31 @@ class _WarehouseState extends State<Warehouse> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Padding(padding: const EdgeInsets.only(top: 10.0)),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left:13.0),
+                  child: Text("Container No."),
+                ),
+              ],
+            ),
             Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Container(
-                height: 45,
+              padding: EdgeInsets.only(right: 95.0),
+              child: SizedBox(
+                height: 40,
                 width: 300,
-                child: TextFormField(
-                  inputFormatters: [UpperCaseTextFormatter()],
+                child: TextField(
+                    inputFormatters: [
+                      new LengthLimitingTextInputFormatter(11),// for mobile
+                    ],
                   textCapitalization: TextCapitalization.characters,
                   keyboardType: TextInputType.emailAddress,
                   controller: sealcontainercontroller,
                   decoration: InputDecoration(
-                      hintText: "Please Enter Container No.",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              const BorderSide(color: Colors.black)),
+                          borderSide: const BorderSide(color: Colors.black)),
                       enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.black)),
                       suffixIcon: GestureDetector(
@@ -291,27 +283,33 @@ class _WarehouseState extends State<Warehouse> {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(18.0),
-              child: Container(
-                width: 300,
-                child: TextFormField(
-                  controller: remarkcontroller,
-                  minLines: 2,
-                  maxLines: 10,
-                  decoration: InputDecoration(
-                    hintText: "Type Remark Here.........",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Colors.black)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black)),
-                  ),
+            SizedBox(height: 10,),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left:13.0),
+                  child: Text("Remarks Here."),
+                ),
+              ],
+            ),
+            SizedBox(
+              width: 400, // <-- TextField width
+              height: 250,
+              child: TextField(
+                controller: remarkcontroller,
+                maxLines: 500,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.black)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
                 ),
               ),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Flexible(
                   flex: 1,
@@ -333,7 +331,7 @@ class _WarehouseState extends State<Warehouse> {
                 Flexible(
                   flex: 1,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: const EdgeInsets.only(right:8.0),
                     child: RadioListTile(
                       title: Text("Destuffing",
                           style: TextStyle(
@@ -360,13 +358,13 @@ class _WarehouseState extends State<Warehouse> {
                       if ((Warehouseobject!= true)) {
                         return selectedImagesList!=null?
                           SizedBox(
-                          height: 400,
+                          height: 300,
                           child: GridView.builder(
                             shrinkWrap: true,
                             gridDelegate:
                             SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4,
-                                crossAxisSpacing: 2
+                                crossAxisCount: 5,
+                                crossAxisSpacing:4
 
                             ),
                             itemCount: selectedImagesList!.length,
@@ -375,8 +373,8 @@ class _WarehouseState extends State<Warehouse> {
                                 Stack(
                                   children: [
                                     Container(
-                                      width: 80,
-                                      height: 100,
+                                      width: 60,
+                                      height: 60,
                                       child: Image.file(
                                           File(selectedImagesList![index].path)),
                                     ),

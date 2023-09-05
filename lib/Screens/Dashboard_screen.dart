@@ -2,16 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:super_app/Screens/Importarrival_info.dart';
 import 'package:super_app/Screens/Privacypolicy_page.dart';
 import 'package:super_app/Screens/Seal_verify.dart';
-import 'package:super_app/Services/EIR%20Controller.dart';
 import 'package:super_app/universal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:super_app/Screens/EIR_documents.dart';
 import 'package:super_app/Screens/Login_screen.dart';
 import 'Change_password.dart';
+import 'GateTransit.dart';
 import 'ILEContainer_search.dart';
+import 'ILEContainersearch_Date.dart';
+import 'Rake_survey.dart';
+import 'Temp_Monitoring.dart';
+import 'Typeaheadsearchdata.dart';
 import 'Warehouse_activity.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -25,6 +27,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   File? imageFile;
   final picker = ImagePicker();
+
   Future<bool> _onWillPop() async {
     return (await showDialog(
       context: context,
@@ -47,12 +50,13 @@ class _DashboardState extends State<Dashboard> {
     )) ??
         false;
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope( onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("E-Biz+"),
+          title: const Text("e-Operation Management"),
           backgroundColor: Color(0xFF184f8d),
         ),
           drawer: Drawer(
@@ -64,7 +68,8 @@ class _DashboardState extends State<Dashboard> {
                   accountEmail: const Text(""),
                   currentAccountPicture: InkWell(
                     onTap: (){
-                      _showDialog();},
+                      //_showDialog();
+                      },
                     child: Stack(
                       children: [
                         Container(
@@ -93,38 +98,35 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
-                      side: BorderSide(color: Colors.blue )),
+                      side: const BorderSide(color: Colors.blue )),
                   elevation: 4.0,
-                  child: ListTile(
-                    dense: true,
-                      leading: Image.asset("images/about.png",height:25,),
-                      title: const Text(
-                        'About Us',
-                        style: TextStyle(fontSize: 15.0),
-                      ),
-                      onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => updateprofile()));
-                      }),
-                ),
-                Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
-                      side: BorderSide(color: Colors.blue )),
-                  elevation: 4.0,
-                  child: ListTile(
-                    dense: true,
-                    leading: Icon(Icons.search,size: 30.0,color: Colors.black),
-                    title: Text("History",style: TextStyle(fontSize: 15.0,color: Colors.black),),
-                    onTap: (){
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Containersearch()));
-
-                    },
-                  ),
+                  child: ExpansionTile(
+                      title: const Text("History",style: TextStyle(fontSize: 15.0,color: Colors.black),),
+                  children: [
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.search,size: 25.0,color: Colors.black),
+                      title: const Text("Based On Container",style: TextStyle(fontSize: 14.0,color: Colors.black),),
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Containersearch()));
+                      },
+                    ),
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.search,size: 25.0,color: Colors.black),
+                      title: const Text("Based On Date",style: TextStyle(fontSize: 14.0,color: Colors.black),),
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Containerdatesearch()));
+                      },
+                    ),
+                  ],
+                  )
                 ),
                 Card(
                   elevation: 4.0,
@@ -166,24 +168,6 @@ class _DashboardState extends State<Dashboard> {
                       side: BorderSide(color: Colors.blue )),
                   child: ListTile(
                     dense: true,
-                      leading: const Icon(Icons.share,color: Colors.black,),
-                      title: const Text(
-                        'Share',
-                        style: TextStyle(fontSize: 15.0),
-                      ),
-                      onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => wallethistory()));
-                      }),
-                ),
-                Card(
-                  elevation: 4.0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),
-                      side: BorderSide(color: Colors.blue )),
-                  child: ListTile(
-                    dense: true,
                       leading: const Icon(Icons.exit_to_app,color: Colors.black,),
                       title: const Text(
                         'Logout',
@@ -193,8 +177,8 @@ class _DashboardState extends State<Dashboard> {
                         SharedPreferences preferences =
                         await SharedPreferences.getInstance();
                         await preferences.clear();
-                        Navigator.of(context).pop();
-                        Navigator.push(context,
+                        //Navigator.of(context).pop();
+                        Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: (context) => LoginScreen()));
                       }),
                 ),
@@ -213,76 +197,41 @@ class _DashboardState extends State<Dashboard> {
                     shrinkWrap: true,
                     crossAxisCount: 3,
                     children: [
-                      // Card(
-                      //   margin: const EdgeInsets.all(10.0),
-                      //   elevation: 10.0,
-                      //   shadowColor: Colors.blueAccent,
-                      //   color: Colors.white,
-                      //   shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(10.0),
-                      //       side: const BorderSide(color: Colors.red,width: 1)
-                      //   ),
-                      //   child: InkWell(
-                      //     onTap: () {
-                      //        Navigator.push(context, MaterialPageRoute(builder: (context) => const Documentsdownload()));
-                      //     },
-                      //     splashColor: Colors.green,
-                      //     child: Center(
-                      //       child: Column(
-                      //         mainAxisSize: MainAxisSize.min,
-                      //         children: <Widget>[
-                      //           Image.asset(
-                      //             'images/document1.png',
-                      //             height: 50,
-                      //             width: 50,
-                      //           ),
-                      //           const Text(
-                      //             'EIR Copy',
-                      //             textAlign: TextAlign.center,
-                      //             style: const TextStyle(
-                      //                 fontSize: 15.0,
-                      //                 fontWeight: FontWeight.bold),
-                      //           )
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // Card(
-                      //   margin: const EdgeInsets.all(10.0),
-                      //   elevation: 10.0,
-                      //   shadowColor: Colors.blueAccent,
-                      //   color: Colors.white,
-                      //   shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(10.0),
-                      //       side: const BorderSide(color: Colors.red,width: 1)
-                      //   ),
-                      //   child: InkWell(
-                      //     onTap: () {
-                      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const Importarrival()));
-                      //     },
-                      //     splashColor: Colors.green,
-                      //     child: Center(
-                      //       child: Column(
-                      //         mainAxisSize: MainAxisSize.min,
-                      //         children: <Widget>[
-                      //           Image.asset(
-                      //             'images/containernew.png',
-                      //             height: 50,
-                      //             width: 50,
-                      //           ),
-                      //           const Text(
-                      //             'Container Arrival Info.',
-                      //             textAlign: TextAlign.center,
-                      //             style: TextStyle(
-                      //                 fontSize: 15.0,
-                      //                 fontWeight: FontWeight.bold),
-                      //           )
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      Card(
+                  margin: const EdgeInsets.all(10.0),
+              elevation: 10.0,
+              shadowColor: Colors.blueAccent,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  side: const BorderSide(color: Colors.red,width: 1)
+              ),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  Shippingcontainer()));
+                },
+                splashColor: Colors.green,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Image.asset(
+                        'images/sealnew.png',
+                        height: 60,
+                        width: 60,
+                      ),
+                      const Text(
+                        'Imp-Rail-Seal',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
                       Card(
                         margin: const EdgeInsets.all(10.0),
                         elevation: 10.0,
@@ -294,7 +243,42 @@ class _DashboardState extends State<Dashboard> {
                         ),
                         child: InkWell(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Homescreeninfo()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  Tempmonitor()));
+                          },
+                          splashColor: Colors.green,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Image.asset(
+                                  'images/rffertemp.png',
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                const Text(
+                                  'Temp. Monitoring',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Card(
+                        margin: const EdgeInsets.all(10.0),
+                        elevation: 10.0,
+                        shadowColor: Colors.blueAccent,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: const BorderSide(color: Colors.red,width: 1)
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  AutoComplete()));
                           },
                           splashColor: Colors.green,
                           child: Center(
@@ -303,11 +287,46 @@ class _DashboardState extends State<Dashboard> {
                               children: <Widget>[
                                 Image.asset(
                                   'images/sealnew.png',
-                                  height: 50,
-                                  width: 50,
+                                  height: 60,
+                                  width: 60,
                                 ),
                                 const Text(
-                                  'Seal Verification',
+                                  'InYard-Seal Verification',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Card(
+                        margin: const EdgeInsets.all(10.0),
+                        elevation: 10.0,
+                        shadowColor: Colors.blueAccent,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: const BorderSide(color: Colors.red,width: 1)
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  Rakesurvey()));
+                          },
+                          splashColor: Colors.green,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Image.asset(
+                                  'images/rake.png',
+                                  height: 60,
+                                  width: 60,
+                                ),
+                                const Text(
+                                  'e-Rake Survey',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15.0,

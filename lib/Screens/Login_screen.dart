@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:super_app/Services/Login%20controller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import '../universal.dart';
 import 'Mobileotp_screen.dart';
 
@@ -21,7 +19,7 @@ void main() {
     theme: ThemeData(
       primaryColor: Colors.red,
       // ignore: deprecated_member_use
-      accentColor: Colors.deepOrange,
+      hintColor: Colors.deepOrange,
     ),
     home: LoginScreen(),
   ));
@@ -49,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Globaldata.DisplayName = prefs.getString('msg')!;
     Globaldata.UserId = prefs.getString("UserId")!;
     Globaldata.Password = prefs.getString("Password")!;
+    Globaldata.Location= prefs.getString("Location")!;
     if (Globaldata.UserId.isNotEmpty) {
       Future.delayed(Duration(seconds: 5), () {
         print("Executed after 5 seconds");
@@ -172,7 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     child: Expanded(
                       child: Material(
-                        child: Checkbox(
+                        child:
+                        Checkbox(
                           checkColor: Colors.red,
                           value: agree,
                           onChanged: (newValue) {
@@ -188,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextSpan(
                         style: TextStyle( fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF184f8d),decoration: TextDecoration.underline),
+                            color: Color(0xFF184f8d),),
                         text: 'I have read and agree with terms & conditions.',
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async{

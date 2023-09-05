@@ -29,12 +29,14 @@ class Login {
   String msg;
   String userId;
   String password;
+  String location;
 
   Login({
     required this.error,
     required this.msg,
     required this.userId,
     required this.password,
+    required this.location,
   });
 
   factory Login.fromJson(Map<String, dynamic> json) => Login(
@@ -42,6 +44,7 @@ class Login {
     msg: json["msg"],
     userId: json["UserId"],
     password: json["Password"],
+    location: json["Location"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -49,5 +52,6 @@ class Login {
     "msg": msg,
     "UserId": userId,
     "Password": password,
+    "Location": location,
   };
 }

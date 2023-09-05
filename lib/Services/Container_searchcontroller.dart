@@ -7,7 +7,6 @@ import 'package:super_app/universal.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
 import '../Models/ILE_Models.dart';
 import '../Models/Node_containersearch.dart';
 
@@ -72,16 +71,16 @@ class ILEController extends GetxController{
     };
     var request = http.Request('GET', Uri.parse('http://103.25.130.254/grfl_login_api/Api/ILESearch'));
     request.body = json.encode({
+
       "ContainerNo": searchcontroller.text,
-      "ActivityType": selectedvalue.toString()
+      "ActivityType": selectedvalue.toString(),
+      "Remarks":""
     });
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     var responseData = await response.stream.bytesToString();
     try{
       if (response.statusCode == 200) {
-        print("*********");
-        print(responseData);
          autoGenerate = Welcome.fromJson(jsonDecode(responseData));
         var searchdatamessage  = autoGenerate.msg;
         var containerno = autoGenerate.data[index].containerNo;
@@ -101,7 +100,6 @@ class ILEController extends GetxController{
             fontSize: 16.0);
         print("autoGenerate");
         print(autoGenerate);
-
         return autoGenerate;
 
       }

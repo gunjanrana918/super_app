@@ -1,21 +1,21 @@
 // To parse this JSON data, do
 //
-//     final welcome = welcomeFromJson(jsonString);
+//     final dateIleSearch = dateIleSearchFromJson(jsonString);
 
 import 'dart:convert';
 
-Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
+DateIleSearch dateIleSearchFromJson(String str) => DateIleSearch.fromJson(json.decode(str));
 
-String welcomeToJson(Welcome data) => json.encode(data.toJson());
+String dateIleSearchToJson(DateIleSearch data) => json.encode(data.toJson());
 
-class Welcome {
+class DateIleSearch {
   List<Datum> data;
 
-  Welcome({
+  DateIleSearch({
     required this.data,
   });
 
-  factory Welcome.fromJson(Map<String, dynamic> json) => Welcome(
+  factory DateIleSearch.fromJson(Map<String, dynamic> json) => DateIleSearch(
     data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
   );
 
@@ -29,6 +29,7 @@ class Datum {
   String msg;
   String containerNo;
   String activityType;
+  String dtTime;
   List<FilePath> filePath;
 
   Datum({
@@ -36,14 +37,16 @@ class Datum {
     required this.msg,
     required this.containerNo,
     required this.activityType,
+    required this.dtTime,
     required this.filePath,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     error: json["error"],
-    msg: json["msg"],
+    msg: json["msg"]!,
     containerNo: json["ContainerNo"],
-    activityType: json["ActivityType"],
+    activityType: json["ActivityType"]!,
+    dtTime: json["DtTime"]!,
     filePath: List<FilePath>.from(json["FilePath"].map((x) => FilePath.fromJson(x))),
   );
 
@@ -52,34 +55,38 @@ class Datum {
     "msg": msg,
     "ContainerNo": containerNo,
     "ActivityType": activityType,
+    "DtTime": dtTime,
     "FilePath": List<dynamic>.from(filePath.map((x) => x.toJson())),
   };
 }
 
+
+
+
+
 class FilePath {
   String filename;
-  String dtTime;
   String time;
   String remarks;
 
   FilePath({
     required this.filename,
-    required this.dtTime,
     required this.time,
     required this.remarks,
   });
 
   factory FilePath.fromJson(Map<String, dynamic> json) => FilePath(
     filename: json["Filename"],
-    dtTime: json["DtTime"],
-    time: json["Time"],
+    time: json["Time"]!,
     remarks: json["Remarks"],
   );
 
   Map<String, dynamic> toJson() => {
     "Filename": filename,
-    "DtTime": dtTime,
     "Time": time,
     "Remarks": remarks,
   };
 }
+
+
+

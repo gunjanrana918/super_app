@@ -3,37 +3,32 @@ import 'dart:io';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
-import '../Models/Container_validation model.dart';
-import '../Models/ILE_Imageupload.dart';
-import '../universal.dart';
+import 'package:image_picker/image_picker.dart';
 import '../Models/Esealsuggestion_search.dart';
-import 'Dashboard_screen.dart';
+import '../Models/Gateintransit_suggestionsearch.dart';
+import '../Models/Grounddata_Upload.dart';
+import 'package:http/http.dart' as http;
+import '../universal.dart';
 
-class AutoComplete extends StatefulWidget {
-  const AutoComplete({Key? key}) : super(key: key);
+class Shippingcontainer extends StatefulWidget {
+  const Shippingcontainer({super.key});
 
   @override
-  State<AutoComplete> createState() => _AutoCompleteState();
+  State<Shippingcontainer> createState() => _ShippingcontainerState();
 }
 
-int index = 0;
-class _AutoCompleteState extends State<AutoComplete> {
-  Imageupload? parsedata;
-  ValidContainer? newvaliddata;
+class _ShippingcontainerState extends State<Shippingcontainer> {
+  Grounddataupload? parsedata;
   final TextEditingController remarkscontroller = TextEditingController();
-  GlobalKey<AutoCompleteTextFieldState<Players>> key =  GlobalKey();
-  late  AutoCompleteTextField searchTextField;
+  GlobalKey<AutoCompleteTextFieldState<Gateintransit>> key = new GlobalKey();
+  late AutoCompleteTextField searchTextField;
   TextEditingController controller = TextEditingController();
-  final PlayersViewModel newdata = PlayersViewModel();
+  final IntransitViewModel transitdata = IntransitViewModel();
   final picker = ImagePicker();
   String selectedvalue = "3";
   File? imageFile;
   var message;
-  bool sealobject = false;
-  List<XFile>? selectedimageslist=[];
   void Onpressed() async {
     showLoadingIndicator();
     await asyncFileUpload();
@@ -83,40 +78,20 @@ class _AutoCompleteState extends State<AutoComplete> {
     Navigator.of(context).pop();
   }
 
-  Pickimage() async {
-    var selectedImages = await ImagePicker().pickMultiImage();
-    if (selectedImages.isNotEmpty) {
-      setState(() {
-        selectedimageslist!.addAll(selectedImages);
-        sealobject=false;
-      });
-      print(selectedImages.length);
-      print(selectedimageslist?.length.toString());
-    }
-  }
   //Imageupload function/////
   asyncFileUpload() async {
     int index = 0;
-    var request = http.MultipartRequest(
-        "POST", Uri.parse("http://103.25.130.254/grfl_login_api/Api/ILE"));
+    var request = http.MultipartRequest("POST",
+        Uri.parse("http://103.25.130.254/grfl_login_api/api/AddGround"));
     request.fields["containerno"] = searchTextField.textField!.controller!.text;
     print(searchTextField.textField!.controller!.text);
     request.fields["activitytype"] = selectedvalue.toString();
     request.fields["remarks"] = remarkscontroller.text;
-    request.fields["arrivaldate"] = Globaldata.ArrivalDate;
-    print(Globaldata.ArrivalDate);
-    if (sealobject == true) {
-      request.files.add(await http.MultipartFile.fromPath('', imageFile!.path));
-    } else {
-      for (int i = 0; i < selectedimageslist!.length; i++) {
-        var newfile = selectedimageslist![i].path;
-        request.files.add(await http.MultipartFile.fromPath('', newfile));
-      }
-    }
+    request.files.add(await http.MultipartFile.fromPath('', imageFile!.path));
     var response = await request.send();
     if (response.statusCode == 200) {
       var responseData = await response.stream.bytesToString();
-      var newmyparsedata = Imageupload.fromJson(json.decode(responseData));
+      var newmyparsedata = Grounddataupload.fromJson(json.decode(responseData));
       message = newmyparsedata.ileTable[index].msg;
       Globaldata.esealmessage = message;
       if (newmyparsedata.ileTable[index].error == false) {
@@ -133,11 +108,15 @@ class _AutoCompleteState extends State<AutoComplete> {
           searchTextField.clear();
           imageFile = null;
         });
+        // Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => Dashboard(),
+        //     ));
       }
       else {
-        print(Globaldata.esealmessage);
         Fluttertoast.showToast(
-            msg: 'Container not in inventory',
+            msg: "Image not upload.",
             gravity: ToastGravity.BOTTOM,
             toastLength: Toast.LENGTH_SHORT,
             timeInSecForIosWeb: 2,
@@ -152,46 +131,24 @@ class _AutoCompleteState extends State<AutoComplete> {
       }
     }
   }
-  ///****Container Validation API***////
-  Valid_container() async {
-    int index = 0;
-    var headers = {'Content-Type': 'application/json'};
-    var request = http.Request('GET',
-        Uri.parse('http://103.25.130.254/grfl_login_api/Api/Checkcontainer'));
-    request.body = json.encode({
-      "ContainerNo": searchTextField.textField!.controller!.text,
-    });
-    request.headers.addAll(headers);
-    http.StreamedResponse response = await request.send();
-    var responseData = await response.stream.bytesToString();
-    if (response.statusCode == 200) {
-      newvaliddata = ValidContainer.fromJson(jsonDecode(responseData));
-      var mynewmessage = newvaliddata!.ileTable[index].msg;
-      Globaldata.validsealmessage = mynewmessage;
-      Globaldata.ArrivalDate = newvaliddata!.ileTable[index].arrivalDate;
-      print("Globaldata.ArrivalDate");
-      print(Globaldata.ArrivalDate);
-      return newvaliddata;
-    }
-  }
+
   @override
   void initState() {
     super.initState();
-    newdata.loadPlayers().then((value) {
-     Globaldata.Sealdatasuggestion;
+    transitdata.loadtransitdata().then((value) {
       setState(() {
-        //Globaldata.Sealdatasuggestion=newdata.Data;
-        newdata.Data;
+        transitdata.Data;
       });
     });
-    // newdata.loadPlayers();
+   // transitdata.loadtransitdata();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "In yard-Seal Verification",
+          "Imp-Rail-Seal Verification",
           style: TextStyle(
             fontSize: 19.0,
           ),
@@ -215,9 +172,7 @@ class _AutoCompleteState extends State<AutoComplete> {
                       backgroundColor: Color(0xFF184f8d),
                       textColor: Colors.white,
                       fontSize: 16.0);
-                }
-                else {
-                  Valid_container();
+                } else {
                   openCamera();
                 }
               },
@@ -257,8 +212,7 @@ class _AutoCompleteState extends State<AutoComplete> {
                       backgroundColor: Color(0xFF184f8d),
                       textColor: Colors.white,
                       fontSize: 16.0);
-                }
-                else {
+                } else {
                   Onpressed();
                 }
               },
@@ -274,47 +228,48 @@ class _AutoCompleteState extends State<AutoComplete> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Padding(padding: EdgeInsets.only(top: 10.0)),
+            const Padding(padding: const EdgeInsets.only(top: 10.0)),
             const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left:22.0),
+                  padding: EdgeInsets.only(left: 22.0),
                   child: Text("Container No."),
                 ),
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(right: 95.0,top: 10.0),
+              padding: EdgeInsets.only(right: 95.0, top: 10.0),
               child: SizedBox(
                 height: 40,
                 width: 300,
-                child:
-                searchTextField = AutoCompleteTextField<Players>(
-                    style:  TextStyle(color: Colors.black, fontSize: 16.0),
+                child: searchTextField = AutoCompleteTextField<Gateintransit>(
+                    style: TextStyle(color: Colors.black, fontSize: 16.0),
                     decoration: InputDecoration(
-                        contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
                         hintStyle: TextStyle(color: Colors.black)),
-                    inputFormatters: [
-                      new LengthLimitingTextInputFormatter(11),// for mobile
+                    inputFormatters: [new LengthLimitingTextInputFormatter(11),// for mobile
                     ],
                     itemSubmitted: (item) {
                       setState(() {
                         searchTextField.textField?.controller?.text = item.containerNo;
                         imageFile=null;
                       });
+                      print("Data");
+                      print(searchTextField.textField?.controller?.text);
                     },
                     clearOnSubmit: false,
                     key: key,
-                    suggestions: newdata.Data,
+                    suggestions: transitdata.Data,
                     itemBuilder: (context, item) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(item.containerNo,
-                            style: const TextStyle(
-                                fontSize: 16.0
-                            ),),
+                          Text(
+                            item.containerNo,
+                            style: TextStyle(fontSize: 16.0),
+                          ),
                         ],
                       );
                     },
@@ -328,20 +283,24 @@ class _AutoCompleteState extends State<AutoComplete> {
                     }),
               ),
             ),
-            const SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left:22.0),
+                  padding: EdgeInsets.only(left: 22.0),
                   child: Text("Remarks"),
                 ),
               ],
             ),
-            const SizedBox(height: 5,),
             SizedBox(
-                width: 400, // <-- TextField width
-                height: 250,
+              height: 5,
+            ),
+            SizedBox(
+              width: 400, // <-- TextField width
+              height: 250,
               child: TextField(
                 controller: remarkscontroller,
                 maxLines: 500,
@@ -354,27 +313,19 @@ class _AutoCompleteState extends State<AutoComplete> {
                 ),
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 5.0, left: 8.0)),
+            Padding(padding: EdgeInsets.only(top: 5.0, left: 8.0)),
             Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Builder(builder: (context) {
-                  if (sealobject == false) {
-                    return selectedimageslist!=null?
-                      SizedBox(
-                      height: 300,
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 5, crossAxisSpacing: 4),
-                        itemCount: selectedimageslist!.length,
-                        itemBuilder: (context, int index) {
-                          return
-                            Stack(
+                  return imageFile != null
+                      ? SizedBox(
+                          height: 200,
+                          child: Stack(
                             children: [
                               Container(
-                                width: 60,
-                                height: 60,
-                                child: Image.file(
-                                    File(selectedimageslist![index].path)),
+                                width: 80,
+                                height: 100,
+                                child: Image.file(File(imageFile!.path)),
                               ),
                               Positioned(
                                   right: 15,
@@ -386,108 +337,69 @@ class _AutoCompleteState extends State<AutoComplete> {
                                         size: 25,
                                       ),
                                       onPressed: () => setState(() {
-                                            selectedimageslist!.removeAt(index);
+                                            imageFile = null;
                                           })))
                             ],
-                          );
-                        },
-                      ),
-                    ):Container();
-                  } else {
-                    return imageFile!=null?
-                      SizedBox(
-                      height: 200,
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 100,
-                            child: Image.file(File(imageFile!.path)),
                           ),
-                          Positioned(
-                              right: 15,
-                              top: -14,
-                              child: IconButton(
-                                  icon: const Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                    size: 25,
-                                  ),
-                                  onPressed: () => setState(() {
-                                        imageFile = null;
-                                      })))
-                        ],
-                      ),
-                    ):Container();
-                  }
+                        )
+                      : Container();
                 })),
           ],
         ),
       ),
     );
   }
-
-  Future<void> _showDialog() {
-    // ignore: missing_return
-    return showDialog(
-        context: this.context,
-        builder: (BuildContext) {
-          return AlertDialog(
-              contentPadding: EdgeInsets.all(10.0),
-              shape: Border.all(color: Colors.red, width: 2),
-              title: Text(
-                'Select Image Source',
-              ),
-              content: SingleChildScrollView(
-                  child: ListBody(
-                children: <Widget>[
-                  // GestureDetector(
-                  //   child: Text('Gallery', style: TextStyle(fontSize: 20.0)),
-                  //   onTap: () {
-                  //     Pickimage();
-                  //     setState(() {});
-                  //     Navigator.of(this.context).pop(false);
-                  //   },
-                  // ),
-                  Padding(padding: EdgeInsets.only(top: 10.0)),
-                  GestureDetector(
-                    child: Text('Camera',
-                        style: TextStyle(fontSize: 20.0, color: Colors.red)),
-                    onTap: () {
-                      openCamera();
-                      setState(() {});
-                      Navigator.of(this.context).pop(false);
-                    },
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 10.0)),
-                  Row(
-                    children: [
-                      Expanded(
-                          child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(this.context).pop(false);
-                        },
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(fontSize: 20.0),
-                        ),
-                      ))
-                    ],
-                  )
-                ],
-              )));
-        });
-  }
-
-  Future<void> openGallery() async {
-    var pickedFile =
-        (await picker.pickImage(source: ImageSource.gallery, imageQuality: 25));
-    setState(() {
-      imageFile = File(pickedFile!.path);
-    });
-    print("ABCD");
-    print(imageFile);
-  }
+  // Future<void> _showDialog() {
+  //   // ignore: missing_return
+  //   return showDialog(
+  //       context: this.context,
+  //       builder: (BuildContext) {
+  //         return AlertDialog(
+  //             contentPadding: EdgeInsets.all(10.0),
+  //             shape: Border.all(color: Colors.red, width: 2),
+  //             title: Text(
+  //               'Select Image Source',
+  //             ),
+  //             content: SingleChildScrollView(
+  //                 child: ListBody(
+  //                   children: <Widget>[
+  //                     // GestureDetector(
+  //                     //   child: Text('Gallery', style: TextStyle(fontSize: 20.0)),
+  //                     //   onTap: () {
+  //                     //     Pickimage();
+  //                     //     setState(() {});
+  //                     //     Navigator.of(this.context).pop(false);
+  //                     //   },
+  //                     // ),
+  //                     Padding(padding: EdgeInsets.only(top: 10.0)),
+  //                     GestureDetector(
+  //                       child: Text('Camera',
+  //                           style: TextStyle(fontSize: 20.0, color: Colors.red)),
+  //                       onTap: () {
+  //                         openCamera();
+  //                         setState(() {});
+  //                         Navigator.of(this.context).pop(false);
+  //                       },
+  //                     ),
+  //                     Padding(padding: EdgeInsets.only(top: 10.0)),
+  //                     Row(
+  //                       children: [
+  //                         Expanded(
+  //                             child: ElevatedButton(
+  //                               onPressed: () {
+  //                                 Navigator.of(this.context).pop(false);
+  //                               },
+  //                               child: Text(
+  //                                 "Cancel",
+  //                                 style: TextStyle(fontSize: 20.0),
+  //                               ),
+  //                             ))
+  //                       ],
+  //                     )
+  //                   ],
+  //                 )));
+  //       });
+  // }
 
   //select image from camera
   Future<void> openCamera() async {
@@ -495,12 +407,9 @@ class _AutoCompleteState extends State<AutoComplete> {
         (await picker.pickImage(source: ImageSource.camera, imageQuality: 25));
     setState(() {
       imageFile = File(pickedFile!.path);
-      sealobject = true;
     });
     setState(() {});
     print("ABCD");
     print(imageFile);
   }
 }
-
-

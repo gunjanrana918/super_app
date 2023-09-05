@@ -1,21 +1,21 @@
 // To parse this JSON data, do
 //
-//     final validContainer = validContainerFromJson(jsonString);
+//     final reffercontainerModel = reffercontainerModelFromJson(jsonString);
 
 import 'dart:convert';
 
-ValidContainer validContainerFromJson(String str) => ValidContainer.fromJson(json.decode(str));
+ReffercontainerModel reffercontainerModelFromJson(String str) => ReffercontainerModel.fromJson(json.decode(str));
 
-String validContainerToJson(ValidContainer data) => json.encode(data.toJson());
+String reffercontainerModelToJson(ReffercontainerModel data) => json.encode(data.toJson());
 
-class ValidContainer {
+class ReffercontainerModel {
   List<IleTable> ileTable;
 
-  ValidContainer({
+  ReffercontainerModel({
     required this.ileTable,
   });
 
-  factory ValidContainer.fromJson(Map<String, dynamic> json) => ValidContainer(
+  factory ReffercontainerModel.fromJson(Map<String, dynamic> json) => ReffercontainerModel(
     ileTable: List<IleTable>.from(json["ILETable"].map((x) => IleTable.fromJson(x))),
   );
 
