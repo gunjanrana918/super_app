@@ -102,13 +102,11 @@ class _RakesurveyState extends State<Rakesurvey> {
       }
     }
   }
-
   @override
   void initState() {
     super.initState();
     _getRakeList();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -898,7 +896,7 @@ class _DetailsviewrakeState extends State<Detailsviewrake> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text("From Location  :",
+                    child: Text("From                   :",
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                   Padding(
@@ -910,9 +908,9 @@ class _DetailsviewrakeState extends State<Detailsviewrake> {
                             .fromLocation),
                   ),
                   const Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.only(left: 30.0),
                     child: Text(
-                      "To Location :",
+                      "To  :",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -982,16 +980,13 @@ class _DetailsviewrakeState extends State<Detailsviewrake> {
                                 DataCell(
                                     InkWell(
                                   onTap: ()  {
-                                    print("ontap");
                                     if(e.status=='No'){
-                                      print("right");
                                         tablecontainer = e.containerNo;
                                         setState(() {
                                           containerUpload();
                                         });
                                     }
                                     else {
-                                      print("else");
                                       Fluttertoast.showToast(
                                           msg: "Status Already Updated.",
                                           gravity: ToastGravity.BOTTOM,
@@ -1010,7 +1005,7 @@ class _DetailsviewrakeState extends State<Detailsviewrake> {
                                     child: Text( "Click Here" ,
                                       style: TextStyle(
                                         fontSize: 19.0,
-                                        //color: Colors.red,
+                                        color: Colors.red,
                                         fontWeight: FontWeight.w600,
                                         fontStyle: FontStyle.normal,
                                       ),
@@ -1049,7 +1044,7 @@ class _DetailsviewrakeState extends State<Detailsviewrake> {
       }
       else {
         Fluttertoast.showToast(
-            msg: parsedata.data[index].msg,
+            msg: 'Data not found',
             gravity: ToastGravity.BOTTOM,
             toastLength: Toast.LENGTH_SHORT,
             timeInSecForIosWeb: 2,
@@ -1163,7 +1158,6 @@ class _containerDetailsState extends State<containerDetails> {
         //     context,
         //     MaterialPageRoute(
         //         builder: (context) => Detailsviewrake()));
-
         Fluttertoast.showToast(
             msg: parsedata.data[index].msg,
             gravity: ToastGravity.BOTTOM,
@@ -1172,7 +1166,9 @@ class _containerDetailsState extends State<containerDetails> {
             backgroundColor: const Color(0xFF184f8d),
             textColor: Colors.white,
             fontSize: 16.0);
-        Navigator.pop(context,true);
+        setState(() {
+          Navigator.pop(context,true);
+        });
       }
       else {
         Fluttertoast.showToast(
@@ -1608,7 +1604,6 @@ class _containerDetailsState extends State<containerDetails> {
                       )
                     : Container();
               })),
-
         ],
       ),
     );

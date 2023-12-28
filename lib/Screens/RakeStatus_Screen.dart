@@ -641,7 +641,7 @@ class _listrakeStatusState extends State<listrakeStatus> {
                                   const Padding(
                                     padding: EdgeInsets.only(left:8.0,top: 5),
                                     child: Text(
-                                      "KSP                :" ,
+                                      "KSP                 :" ,
                                       style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),
                                     ),
                                   ),
@@ -655,7 +655,6 @@ class _listrakeStatusState extends State<listrakeStatus> {
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                       ],

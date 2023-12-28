@@ -454,12 +454,13 @@ class _detailStatusState extends State<detailStatus> {
         agree = false;
         approve = false;
         setState(() {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => joborderdetailsview(
-                ),
-              ));
+          Navigator.pop(context);
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => joborderdetailsview(
+          //       ),
+          //     ));
           Globaldata.JOContainer = '';
         });
         Fluttertoast.showToast(

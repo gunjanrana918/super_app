@@ -135,7 +135,7 @@ class _shippingDataState extends State<shippingData> {
     return  Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(top: 15.0,left: 5.0),
-        child: isLoading?const Center(child: CircularProgressIndicator(strokeWidth: 4,)):
+        child:
         Column(
           children: [
             Row(

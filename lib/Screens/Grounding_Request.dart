@@ -200,7 +200,6 @@ class _GroundingserachState extends State<Groundingserach> {
                   return GestureDetector(
                     onTap: () {
                       searchTextField.text = _newlist[index].containerNo;
-                      print(searchTextField.text);
                       Globaldata.JOContainer=searchTextField.text;
                       print(_newlist.length);
                       for(var i=0; i<_newlist.length;i++){
@@ -272,11 +271,12 @@ class _containerStatusState extends State<containerStatus> {
             textColor: Colors.white,
             fontSize: 16.0);
         setState(() {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Nestedtabbar(),
-              ));
+          Navigator.pop(context);
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => Nestedtabbar(),
+          //     ));
         });
       }
       else {
